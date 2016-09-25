@@ -1,7 +1,7 @@
 import sys, os, datetime, shutil
 
 
-date_format = '%G-W%V/%u'
+date_format = '%G/%G-W%V/%G-W%V-%u'
 
 
 def log(msg, *args):
