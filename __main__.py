@@ -29,7 +29,7 @@ def rename(source_path, target_path):
 	if os.path.exists(target_path):
 		log('File %s exists, comparing with %s ...', target_path, source_path)
 		
-		assert read_file(source_path) == read_file(target_path), 'File already exists: %s'
+		assert read_file(source_path) == read_file(target_path), 'File already exists: {}'.format(target_path)
 	
 	log('Moving %s to %s', source_path, target_path)
 	os.rename(source_path, target_path)
