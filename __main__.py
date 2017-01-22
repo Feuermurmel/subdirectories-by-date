@@ -26,13 +26,13 @@ def rename(source_path, target_path):
 	if target_path == source_path:
 		return
 	
-	if os.path.exists(target_path):
-		log('File %s exists, comparing with %s ...', target_path, source_path)
+	if not os.path.exists(target_path) or read_file(source_path) == read_file(target_path):	
+		log('Moving %s to %s', source_path, target_path)
 		
-		assert read_file(source_path) == read_file(target_path), 'File already exists: {}'.format(target_path)
-	
-	log('Moving %s to %s', source_path, target_path)
-	os.rename(source_path, target_path)
+		makedirs(os.path.dirname(target_path))
+		os.rename(source_path, target_path)
+	else:
+		log('Not moving %s to %s. Destination already exists.', source_path, target_path)
 
 
 def rmtree(path):
