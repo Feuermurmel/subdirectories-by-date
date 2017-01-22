@@ -49,7 +49,7 @@ def main(dir):
 			for i in filenames:
 				_, ext = os.path.splitext(i)
 				
-				if ext in ['.jpg', '.png', '.mov']:
+				if ext in ['.jpg', '.png', '.mov', '.mp4']:
 					yield os.path.join(dirpath, i)
 	
 	def is_empty(dir):
