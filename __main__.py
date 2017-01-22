@@ -63,13 +63,14 @@ def main(dir):
 	for i in unsort_images():
 		file_dir, file_name = os.path.split(i)
 		name_part, _ = os.path.splitext(file_name)
-		date_part = ' '.join('-'.join(name_part.split('-')[:3]).split(' ')[:2])
-		date = datetime.datetime.strptime(date_part, '%Y-%m-%d %H.%M.%S')
-		new_path = os.path.join(dir_for_date(date), file_name)
 		
-		makedirs(os.path.dirname(new_path))
-		rename(i, new_path)
-		check_empty_dirs.append(file_dir)
+		try:
+			date = datetime.datetime.strptime(name_part[:19], '%Y-%m-%d %H.%M.%S')
+		except ValueError:
+			log('Could not extract date from file name: %s', file_name)
+		else:
+			rename(i, os.path.join(dir_for_date(date), file_name))
+			check_empty_dirs.append(file_dir)
 	
 	while check_empty_dirs:
 		empty_dirs = check_empty_dirs
