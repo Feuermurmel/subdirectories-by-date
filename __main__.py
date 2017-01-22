@@ -43,6 +43,9 @@ def rmtree(path):
 def main(dir):
 	def unsort_images():
 		for dirpath, dirnames, filenames in os.walk(dir):
+			for entries in dirnames, filenames:
+				entries[:] = [i for i in entries if not i.startswith('.')]
+			
 			for i in filenames:
 				_, ext = os.path.splitext(i)
 				
