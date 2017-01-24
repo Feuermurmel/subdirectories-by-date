@@ -9,9 +9,10 @@ def log(message, *args):
     print(message.format(*args), file=sys.stderr)
 
 
-def move_to(source_path, target_dir):
+def move_to(source_path, target_path):
+    target_dir = os.path.dirname(target_path)
     prefix, suffix = split_numbered_file_name(
-        os.path.basename(source_path))
+        os.path.basename(target_path))
 
     for i in count(1):
         target_path = os.path.join(

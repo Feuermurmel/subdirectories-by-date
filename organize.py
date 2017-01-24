@@ -36,7 +36,7 @@ def main(dir):
         except ValueError:
             log('Could not extract date from file name: {}', file_name)
         else:
-            move_to(i, dir_for_date(date))
+            move_to(i, os.path.join(dir_for_date(date), file_name))
             check_empty_dirs.append(file_dir)
 
     while check_empty_dirs:
