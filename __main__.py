@@ -1,14 +1,16 @@
 import datetime
 import os
+import re
 import shutil
 import sys
+from itertools import count
 
 
 date_format = '%G/%G-W%V/%G-W%V-%u'
 
 
 def log(message, *args):
-    print(message.format(args), file=sys.stderr)
+    print(message.format(*args), file=sys.stderr)
 
 
 def read_file(path):
@@ -16,30 +18,50 @@ def read_file(path):
         return file.read()
 
 
-def makedirs(path):
+def make_dirs(path):
     if not os.path.exists(path):
         log('Creating {}', path)
         os.makedirs(path)
 
 
-def rename(source_path, target_path):
-    if target_path == source_path:
-        return
+def split_numbered_file_name(file_name):
+    base_name, suffix = os.path.splitext(file_name)
+    match = re.match(
+        '(?P<prefix>.+?)( (?P<number>[2-9]|[1-9][0-9]+))?$',
+        base_name)
 
-    if not os.path.exists(target_path) \
-            or read_file(source_path) == read_file(target_path):
-        log('Moving {} to {}', source_path, target_path)
+    return match.group('prefix'), suffix
 
-        makedirs(os.path.dirname(target_path))
-        os.rename(source_path, target_path)
+
+def join_numbered_file_name(prefix, number, suffix):
+    if number > 1:
+        number_part = ' {}'.format(number)
     else:
-        log(
-            'Not moving {} to {}. Destination already exists.',
-            source_path,
-            target_path)
+        number_part = ''
+
+    return ''.join([prefix, number_part, suffix])
 
 
-def rmtree(path):
+def move_to(source_path, target_dir):
+    prefix, suffix = split_numbered_file_name(
+        os.path.basename(source_path))
+
+    for i in count(1):
+        target_path = os.path.join(
+            target_dir,
+            join_numbered_file_name(prefix, i, suffix))
+
+        if not os.path.exists(target_path) \
+                or read_file(source_path) == read_file(target_path):
+            break
+
+    if source_path != target_path:
+        make_dirs(target_dir)
+        log('Moving {} to {}', source_path, target_path)
+        os.rename(source_path, target_path)
+
+
+def remove_dir(path):
     log('Removing {}', path)
     shutil.rmtree(path)
 
@@ -76,7 +98,7 @@ def main(dir):
         except ValueError:
             log('Could not extract date from file name: {}', file_name)
         else:
-            rename(i, os.path.join(dir_for_date(date), file_name))
+            move_to(i, dir_for_date(date))
             check_empty_dirs.append(file_dir)
 
     while check_empty_dirs:
@@ -85,7 +107,7 @@ def main(dir):
 
         for i in empty_dirs:
             if is_empty(i):
-                rmtree(i)
+                remove_dir(i)
                 check_empty_dirs.append(os.path.dirname(i))
 
 
