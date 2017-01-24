@@ -7,11 +7,8 @@ import sys
 date_format = '%G/%G-W%V/%G-W%V-%u'
 
 
-def log(msg, *args):
-    if len(args) > 0:
-        msg %= args
-
-    print(msg, file=sys.stderr)
+def log(message, *args):
+    print(message.format(args), file=sys.stderr)
 
 
 def read_file(path):
@@ -21,7 +18,7 @@ def read_file(path):
 
 def makedirs(path):
     if not os.path.exists(path):
-        log('Creating %s', path)
+        log('Creating {}', path)
         os.makedirs(path)
 
 
@@ -31,19 +28,19 @@ def rename(source_path, target_path):
 
     if not os.path.exists(target_path) \
             or read_file(source_path) == read_file(target_path):
-        log('Moving %s to %s', source_path, target_path)
+        log('Moving {} to {}', source_path, target_path)
 
         makedirs(os.path.dirname(target_path))
         os.rename(source_path, target_path)
     else:
         log(
-            'Not moving %s to %s. Destination already exists.',
+            'Not moving {} to {}. Destination already exists.',
             source_path,
             target_path)
 
 
 def rmtree(path):
-    log('Removing %s', path)
+    log('Removing {}', path)
     shutil.rmtree(path)
 
 
@@ -77,7 +74,7 @@ def main(dir):
                 name_part[:19],
                 '%Y-%m-%d %H.%M.%S')
         except ValueError:
-            log('Could not extract date from file name: %s', file_name)
+            log('Could not extract date from file name: {}', file_name)
         else:
             rename(i, os.path.join(dir_for_date(date), file_name))
             check_empty_dirs.append(file_dir)
