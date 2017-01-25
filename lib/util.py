@@ -6,7 +6,7 @@ from itertools import count
 
 
 def log(message, *args):
-    print(message.format(*args), file=sys.stderr)
+    print(message.format(*args), file=sys.stderr, flush=True)
 
 
 def move_to(source_path, target_path):
