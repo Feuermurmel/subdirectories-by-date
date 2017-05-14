@@ -10,9 +10,17 @@ def log(message, *args):
 
 
 def move_to(source_path, target_path):
+    source_dir = os.path.dirname(source_path)
+    source_prefix, source_suffix = \
+        split_numbered_file_name(os.path.basename(source_path))
+
     target_dir = os.path.dirname(target_path)
-    prefix, suffix = split_numbered_file_name(
-        os.path.basename(target_path))
+    prefix, suffix = split_numbered_file_name(os.path.basename(target_path))
+
+    # Do nothing if the file is already in the correct directory.
+    if (source_dir, source_prefix, source_suffix) \
+            == (target_dir, prefix, suffix):
+        return
 
     for i in count(1):
         target_path = os.path.join(
