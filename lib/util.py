@@ -9,6 +9,20 @@ def log(message, *args):
     print(message.format(*args), file=sys.stderr, flush=True)
 
 
+def rename(source_path, target_path):
+    dest_dir = os.path.dirname(target_path)
+
+    if os.stat(source_path).st_dev == os.stat(dest_dir).st_dev:
+        os.rename(source_path, target_path)
+    else:
+        temp_path = os.path.join(dest_dir, os.path.basename(source_path) + '~')
+
+        # Copy the file to a temporary path first.
+        shutil.copyfile(source_path, temp_path)
+        os.rename(temp_path, target_path)
+        os.unlink(source_path)
+
+
 def move_to(source_path, target_path):
     source_dir = os.path.dirname(source_path)
     source_prefix, source_suffix = \
@@ -34,7 +48,7 @@ def move_to(source_path, target_path):
     if source_path != target_path:
         make_dirs(target_dir)
         log('Moving {} to {}', source_path, target_path)
-        os.rename(source_path, target_path)
+        rename(source_path, target_path)
 
 
 def read_file(path):
