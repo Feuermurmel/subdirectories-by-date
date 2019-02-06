@@ -1,3 +1,4 @@
+import errno
 import os
 import re
 import shutil
@@ -12,15 +13,18 @@ def log(message, *args):
 def rename(source_path, target_path):
     dest_dir = os.path.dirname(target_path)
 
-    if os.stat(source_path).st_dev == os.stat(dest_dir).st_dev:
+    try:
         os.rename(source_path, target_path)
-    else:
-        temp_path = os.path.join(dest_dir, os.path.basename(source_path) + '~')
+    except OSError as e:
+        if e.errno == errno.EXDEV:
+            temp_path = os.path.join(dest_dir, os.path.basename(source_path) + '~')
 
-        # Copy the file to a temporary path first.
-        shutil.copyfile(source_path, temp_path)
-        os.rename(temp_path, target_path)
-        os.unlink(source_path)
+            # Copy the file to a temporary path first.
+            shutil.copyfile(source_path, temp_path)
+            os.rename(temp_path, target_path)
+            os.unlink(source_path)
+        else:
+            raise
 
 
 def move_to(source_path, target_path):
