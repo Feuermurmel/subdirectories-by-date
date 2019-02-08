@@ -9,13 +9,6 @@ date_format = '%G/%G-W%V/%G-W%V-%u'
 
 
 def main(dir):
-    def unsort_images():
-        for i in walk_visible_files(dir):
-            _, ext = os.path.splitext(os.path.basename(i))
-
-            if ext in ['.jpg', '.png', '.mov', '.mp4']:
-                yield i
-
     def is_empty(dir):
         return os.path.exists(dir) \
                and all(i.startswith('.') for i in os.listdir(dir))
@@ -25,7 +18,7 @@ def main(dir):
 
     check_empty_dirs = []
 
-    for i in unsort_images():
+    for i in walk_visible_files(dir):
         file_dir, file_name = os.path.split(i)
         name_part, _ = os.path.splitext(file_name)
 
