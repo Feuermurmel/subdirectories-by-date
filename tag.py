@@ -22,7 +22,16 @@ def exiftool(file_path):
             'Error: Command exited with status {}: {}'.format(
                 process.returncode, ' '.join(command)))
 
-    return dict(i.split('\t', 1) for i in output.decode().splitlines())
+    def iter_items():
+        for line in output.decode('iso-8859-1').splitlines():
+            parts = line.split('\t', 1)
+
+            if len(parts) < 2:
+                parts += ['']
+
+            yield parts
+
+    return dict(iter_items())
 
 
 def get_capture_date(file_path):
