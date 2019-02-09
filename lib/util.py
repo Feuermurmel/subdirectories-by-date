@@ -92,7 +92,9 @@ def remove_dir(path):
 def walk_visible_files(dir_path):
     for dirpath, dirnames, filenames in os.walk(dir_path):
         for entries in dirnames, filenames:
-            entries[:] = [i for i in entries if not i.startswith('.')]
+            entries[:] = [
+                i for i in entries
+                if not i.startswith('.') and not i.endswith('~')]
 
         for i in filenames:
             yield os.path.join(dirpath, i)
