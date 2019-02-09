@@ -43,6 +43,12 @@ def get_capture_date(file_path):
         if value is not None:
             break
     else:
+        log(
+            'Did not find any of the recognized metadata fields {}. File {} has the fields {}.',
+            ', '.join(capture_date_attributes),
+            file_path,
+            metadata)
+
         return None
 
     pattern = '(?P<year>[0-9]{4})[:-]' \
