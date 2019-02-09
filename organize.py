@@ -26,11 +26,13 @@ def main(dir):
             date = datetime.datetime.strptime(
                 name_part[:19],
                 '%Y-%m-%d %H.%M.%S')
+
+            target_dir = dir_for_date(date)
         except ValueError:
-            log('Could not extract date from file name: {}', file_name)
-        else:
-            move_to(i, os.path.join(dir_for_date(date), file_name))
-            check_empty_dirs.append(file_dir)
+            target_dir = os.path.join(dir, 'unknown')
+
+        move_to(i, os.path.join(target_dir, file_name))
+        check_empty_dirs.append(file_dir)
 
     while check_empty_dirs:
         empty_dirs = check_empty_dirs
